@@ -1,7 +1,7 @@
 use std::{
     fs::File,
     io::{BufRead, BufReader},
-    path::Path,
+    path::{Path, PathBuf},
 };
 pub fn open(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
     if std::fs::exists(&path)? {
@@ -53,6 +53,51 @@ mod test {
         }
     }
     mod sync {
+        use std::io::read_to_string;
+
         use super::*;
+        #[test]
+        fn creates_file_if_needed() {
+            let test_dir = tempdir().unwrap();
+            let path = test_dir.path().join("new_file.txt");
+            let input_memos = vec!["Hello World".to_string()];
+
+            sync(&input_memos, &path).unwrap();
+
+            let file = std::fs::File::open(path).unwrap();
+            let output_memos: Vec<String> = read_to_string(file)
+                .unwrap()
+                .lines()
+                .map(|l| l.to_string())
+                .collect();
+
+            assert_eq!(
+                input_memos, output_memos,
+                "input should be written to the output"
+            );
+        }
+        #[test]
+        fn appends_to_file() {
+            let test_dir = tempdir().unwrap();
+            let path = test_dir.path().join("new_file.txt");
+            let mut input_memos = vec!["Hello World".to_string()];
+
+            sync(&input_memos, &path).unwrap();
+            sync(&input_memos, &path).unwrap();
+
+            input_memos.push("Hello World".to_string());
+
+            let file = std::fs::File::open(path).unwrap();
+            let output_memos: Vec<String> = read_to_string(file)
+                .unwrap()
+                .lines()
+                .map(|l| l.to_string())
+                .collect();
+
+            assert_eq!(
+                input_memos, output_memos,
+                "input should be written to the output"
+            );
+        }
     }
 }
