@@ -70,12 +70,7 @@ mod test {
 
             sync(&input_memos, &path).unwrap();
 
-            let file = std::fs::File::open(path).unwrap();
-            let output_memos: Vec<String> = read_to_string(file)
-                .unwrap()
-                .lines()
-                .map(|l| l.to_string())
-                .collect();
+            let output_memos: Vec<String> = open(path).unwrap();
 
             assert_eq!(
                 input_memos, output_memos,
@@ -93,12 +88,7 @@ mod test {
 
             input_memos.push("Hello World".to_string());
 
-            let file = std::fs::File::open(path).unwrap();
-            let output_memos: Vec<String> = read_to_string(file)
-                .unwrap()
-                .lines()
-                .map(|l| l.to_string())
-                .collect();
+            let output_memos: Vec<String> = open(path).unwrap();
 
             assert_eq!(
                 input_memos, output_memos,
