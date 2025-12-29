@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::env;
 
-use memo_rs::Memos;
+use memo_rs::{Memo, Memos, Status};
 
 fn main() -> Result<()> {
     let memos_file = "memos.txt";
@@ -10,10 +10,11 @@ fn main() -> Result<()> {
 
     if args.is_empty() {
         for memo in memos.inner {
-            println!("{memo}");
+            println!("{}", memo);
         }
     } else {
         let memo = args.join(" ");
+        let memo = Memo::new(memo, Status::Pending);
         memos.add_memo(memo);
         memos.sync()?;
     }
