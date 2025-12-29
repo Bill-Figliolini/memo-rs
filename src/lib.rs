@@ -16,10 +16,7 @@ pub fn sync(memos: &Vec<String>, file: impl AsRef<Path>) -> Result<(), std::io::
     let mut memo_file = File::options().create(true).append(true).open(file)?;
     // initial implementation, but I don't like it. Going to need to figure out some kind of diff-based
     // scheme for keeping memos in order.
-    for memo in memos {
-        _ = writeln!(memo_file, "{}", memo);
-    }
-    Ok(())
+    writeln!(memo_file, "{}", memos.join("\n"))
 }
 
 #[cfg(test)]
