@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Write},
     path::{Path, PathBuf},
 };
 pub fn open(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
@@ -13,6 +13,12 @@ pub fn open(path: impl AsRef<Path>) -> Result<Vec<String>, std::io::Error> {
 }
 
 pub fn sync(memos: &Vec<String>, file: impl AsRef<Path>) -> Result<(), std::io::Error> {
+    let mut memo_file = File::options().create(true).append(true).open(file)?;
+    // initial implementation, but I don't like it. Going to need to figure out some kind of diff-based
+    // scheme for keeping memos in order.
+    for memo in memos {
+        _ = writeln!(memo_file, "{}", memo);
+    }
     Ok(())
 }
 
